@@ -2,8 +2,19 @@
 Can scrap any Google SERP of any keyword to determine similarity and avoid cannibalization
 
 SET UP: 
-- Choose your google region. 
-On the line "search_terms =" please give all of your keywords into the two brackets "[ ]" then run the program. The code launches and gradually tells you the keywords it is analyzing. When it is finished it will show you the similarity percentages between all the keywords.
+- Choose your google region. In the "url=" line, please use the google link from the keyword region. If your keywords are in French, use google.fr.  
+- On the line "search_terms =", please give all of your keywords (KW) into the two brackets [ ].
+- Run the program. The code launches and gradually tells you the keywords it is analyzing. When it is finished it will show you the similarity percentages between all the keywords.
+
+WITH OR WITHOUT TIMER? 
+- If you want to compare less than 100 KW, you don't have to use any timer. I still recommand to wait a couple of minutes to avoid google IP ban.
+- If you want to compare more than 100 KW, I recomand to use the code with the timer.
+- With more than 200-250 KW, a timer is mandatory to avoid IP ban.
+
+HOW TO EDIT SOME OPTIONS? 
+- 
+
+
 
 A few comments :
 - The code compares URLs accurately and analyzes the first 10 URLs in the SERP for each keyword. 1 similar URL = 10% similarity.
