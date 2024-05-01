@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import time
+import random
 
 def fetch_results(search_term, results_set, headers, max_results):
     results_fetched = 0
@@ -24,13 +26,20 @@ def fetch_results(search_term, results_set, headers, max_results):
 
         page += 1
 
+    # Déplacer la pause ici, après avoir traité tous les résultats d'un mot-clé
+    pause_duration = random.uniform(3, 10)
+    print(f"Pausing for {pause_duration:.2f} seconds...")
+    time.sleep(pause_duration)
+
+
 def exact_match_percentage(set1, set2, total_urls=10):
     exact_matches = set1.intersection(set2)
     return len(exact_matches) / total_urls * 100
 
+
 # List of search keywords
 search_terms = [
-    "KW 1", "KW2", "KW3"
+"KW1", "KW2", "KW3"
 ]
 
 # Request headers
@@ -46,18 +55,26 @@ processed_pairs = set()
 unique_keywords = set()
 
 # Fetch results for each search term
+product_counter = 0  # Compteur pour les produits
 for term in search_terms:
     print(f"Fetching results for '{term}'...")
     results_dict[term] = set()
     fetch_results(term, results_dict[term], headers, max_results)
+    product_counter += 1
+
+    # Pause aléatoire toutes les 30 recherches
+    if product_counter % 30 == 0:
+        long_pause_duration = random.uniform(30, 90)
+        print(f"Taking a longer break for {long_pause_duration:.2f} seconds...")
+        time.sleep(long_pause_duration)
 
 # Compare the results and calculate exact match percentages
 for term1 in search_terms:
-    is_unique = True  # Assume the term is unique until a significant match is found
+    is_unique = True
     for term2 in search_terms:
         if term1 != term2:
             percentage = exact_match_percentage(results_dict[term1], results_dict[term2], total_urls=max_results)
-            if percentage > 20:  # If similarity is more than 20%, it's not unique
+            if percentage > 40:
                 is_unique = False
                 pair_identifier = tuple(sorted([term1, term2]))
                 if pair_identifier not in processed_pairs:
@@ -67,7 +84,7 @@ for term1 in search_terms:
                     similar_groups[term1].append((term2, percentage))
                     print(f"Exact match percentage between '{term1}' and '{term2}': {percentage:.0f}%")
     if is_unique:
-        unique_keywords.add(term1)  # If no significant match was found, term is unique
+        unique_keywords.add(term1)
 
 # Displaying the similar groups
 for term, group in similar_groups.items():
@@ -76,6 +93,6 @@ for term, group in similar_groups.items():
         print(f"--> {similar_term} {perc:.0f}%")
 
 # Displaying the list of unique keywords
-print("\nUnique KeyWords :")
+print("\nUnique KeyWords:")
 for term in unique_keywords:
     print(term)
