@@ -1,0 +1,81 @@
+import requests
+from bs4 import BeautifulSoup
+
+def fetch_results(search_term, results_set, headers, max_results):
+    results_fetched = 0
+    page = 0
+    while results_fetched < max_results:
+        url = f"https://www.google.fr/search?q={search_term}&start={page*10}"
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.content, "html.parser")
+        search_results = soup.select(".yuRUbf a")
+
+        if not search_results and page == 0:
+            print(f"Warning: No results found for '{search_term}'. Please check the keyword or your connection.")
+            break
+
+        for result in search_results:
+            if results_fetched >= max_results:
+                break
+            href = result.get('href')
+            if href:
+                results_set.add(href)
+                results_fetched += 1
+
+        page += 1
+
+def exact_match_percentage(set1, set2, total_urls=10):
+    exact_matches = set1.intersection(set2)
+    return len(exact_matches) / total_urls * 100
+
+# List of search keywords
+search_terms = [
+    "KW 1", "KW2", "KW3"
+]
+
+# Request headers
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"}
+
+# Maximum number of results to fetch for each keyword
+max_results = 10
+
+results_dict = {}
+similar_groups = {}
+processed_pairs = set()
+unique_keywords = set()
+
+# Fetch results for each search term
+for term in search_terms:
+    print(f"Fetching results for '{term}'...")
+    results_dict[term] = set()
+    fetch_results(term, results_dict[term], headers, max_results)
+
+# Compare the results and calculate exact match percentages
+for term1 in search_terms:
+    is_unique = True  # Assume the term is unique until a significant match is found
+    for term2 in search_terms:
+        if term1 != term2:
+            percentage = exact_match_percentage(results_dict[term1], results_dict[term2], total_urls=max_results)
+            if percentage > 20:  # If similarity is more than 20%, it's not unique
+                is_unique = False
+                pair_identifier = tuple(sorted([term1, term2]))
+                if pair_identifier not in processed_pairs:
+                    processed_pairs.add(pair_identifier)
+                    if term1 not in similar_groups:
+                        similar_groups[term1] = []
+                    similar_groups[term1].append((term2, percentage))
+                    print(f"Exact match percentage between '{term1}' and '{term2}': {percentage:.0f}%")
+    if is_unique:
+        unique_keywords.add(term1)  # If no significant match was found, term is unique
+
+# Displaying the similar groups
+for term, group in similar_groups.items():
+    print(f"\n{term}")
+    for similar_term, perc in group:
+        print(f"--> {similar_term} {perc:.0f}%")
+
+# Displaying the list of unique keywords
+print("\nUnique KeyWords :")
+for term in unique_keywords:
+    print(term)
