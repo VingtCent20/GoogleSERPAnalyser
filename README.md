@@ -12,7 +12,8 @@ WITH OR WITHOUT TIMER?
 - With more than 200-250 KW, a timer is mandatory to avoid IP ban.
 
 HOW TO EDIT SOME OPTIONS? 
-- 
+- Line 8 you can edit the region of google. 
+- Line 38 you can edit the user agent. I recommend to check regulary if you have the last most commun version. 
 
 
 
